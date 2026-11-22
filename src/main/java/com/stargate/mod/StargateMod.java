@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 
 import com.stargate.mod.registry.ModBlockEntities;
 import com.stargate.mod.registry.ModBlocks;
+import com.stargate.mod.registry.ModCreativeTabs;
 import com.stargate.mod.registry.ModItems;
 import com.stargate.mod.stargate.StargateConfig;
 
@@ -98,6 +99,7 @@ public class StargateMod {
         CREATIVE_MODE_TABS.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
+        ModCreativeTabs.register(modEventBus);
         ModBlockEntities.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
@@ -130,11 +132,6 @@ public class StargateMod {
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
             event.accept(EXAMPLE_BLOCK_ITEM);
-        }
-        if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
-            event.accept(ModItems.STARGATE_CONTROL);
-            event.accept(ModItems.STARGATE_CHEVRON);
-            event.accept(ModItems.NAQUADAH_BLOCK);
         }
     }
 

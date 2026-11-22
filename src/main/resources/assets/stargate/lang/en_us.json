@@ -11,5 +11,19 @@
   "stargate.state.open": "Open",
   "stargate.state.closing": "Closing",
   "block.stargate.naquadah_block": "Naquadah Block",
-  "death.attack.stargate.kawoosh": "%1$s was vaporised by an unstable vortex"
+  "death.attack.stargate.kawoosh": "%1$s was vaporised by an unstable vortex",
+  "block.stargate.stargate_dhd": "Dial Home Device",
+  "itemGroup.stargate": "Stargate",
+  "stargate.dhd.no_gate": "No formed stargate within 16 blocks",
+  "stargate.dhd.incoming": "Incoming wormhole: only the dialing gate can close it",
+  "stargate.dial.unknown_gate": "This gate is not registered",
+  "stargate.dial.gate_busy": "The gate is busy",
+  "stargate.dial.invalid_symbol": "This symbol cannot be entered now",
+  "stargate.dial.invalid_address": "Invalid address",
+  "stargate.dial.no_such_address": "No gate answers to this address",
+  "stargate.dial.self_dial": "A gate cannot dial itself",
+  "stargate.dial.target_busy": "The dialed gate is busy",
+  "stargate.dial.timed_out": "Dialing timed out",
+  "stargate.dial.aborted": "Dialing aborted",
+  "item.stargate.tab_icon": "Point of Origin"
 }

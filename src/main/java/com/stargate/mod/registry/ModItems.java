@@ -35,6 +35,12 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> NAQUADAH_BLOCK =
             ITEMS.registerSimpleBlockItem("naquadah_block", ModBlocks.NAQUADAH_BLOCK);
 
+    /**
+     * Item form of {@link ModBlocks#STARGATE_DHD}. / <i>FR —</i> Forme objet de {@link ModBlocks#STARGATE_DHD}.
+     */
+    public static final DeferredItem<BlockItem> STARGATE_DHD =
+            ITEMS.registerSimpleBlockItem("stargate_dhd", ModBlocks.STARGATE_DHD);
+
     private ModItems() {
     }
 

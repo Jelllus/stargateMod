@@ -51,12 +51,12 @@ public class StargateControlBlock extends BaseEntityBlock {
 
     /**
      * {@code true} while the ring is complete: the block then draws the gate model (ring and chevrons) in
-     * place of its cube; the event horizon is animated separately by
-     * {@link com.stargate.mod.client.EventHorizonRenderer}.
+     * place of its cube; the event horizon and the turning symbol track are drawn separately by
+     * {@link com.stargate.mod.client.StargateRenderer}.
      *
      * <p><i>FR —</i> {@code true} tant que l'anneau est complet : le bloc dessine alors le modèle de la porte
-     * (anneau et chevrons) à la place de son cube ; l'horizon des événements est animé à part par
-     * {@link com.stargate.mod.client.EventHorizonRenderer}.
+     * (anneau et chevrons) à la place de son cube ; l'horizon des événements et la piste des symboles en rotation sont dessinés à part par
+     * {@link com.stargate.mod.client.StargateRenderer}.
      */
     public static final BooleanProperty FORMED = BooleanProperty.create("formed");
 
@@ -76,6 +76,14 @@ public class StargateControlBlock extends BaseEntityBlock {
     public static final IntegerProperty CHEVRONS = IntegerProperty.create("chevrons", 0, StargateFrame.CHEVRONS);
 
     /**
+     * {@code true} while the top chevron is locking a symbol the ring has just brought up: it lights.
+     *
+     * <p><i>FR —</i> {@code true} pendant que le chevron du haut verrouille un symbole que l'anneau vient
+     * d'amener : il s'allume.
+     */
+    public static final BooleanProperty LOCKING = BooleanProperty.create("locking");
+
+    /**
      * Creates the block.
      *
      * <p><i>FR —</i> Crée le bloc.
@@ -88,12 +96,13 @@ public class StargateControlBlock extends BaseEntityBlock {
                 .setValue(ACTIVE, false)
                 .setValue(FORMED, false)
                 .setValue(AXIS, Direction.Axis.X)
-                .setValue(CHEVRONS, 0));
+                .setValue(CHEVRONS, 0)
+                .setValue(LOCKING, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(ACTIVE, FORMED, AXIS, CHEVRONS);
+        builder.add(ACTIVE, FORMED, AXIS, CHEVRONS, LOCKING);
     }
 
     @Override

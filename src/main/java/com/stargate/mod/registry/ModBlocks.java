@@ -3,6 +3,7 @@ package com.stargate.mod.registry;
 import com.stargate.mod.StargateMod;
 import com.stargate.mod.stargate.block.StargateChevronBlock;
 import com.stargate.mod.stargate.block.StargateControlBlock;
+import com.stargate.mod.stargate.block.StargateDhdBlock;
 import com.stargate.mod.stargate.block.StargateNaquadahBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
@@ -70,6 +71,19 @@ public final class ModBlocks {
             p -> p.mapColor(MapColor.COLOR_BLACK)
                     .strength(5.0f, 1200.0f)
                     .sound(SoundType.NETHERITE_BLOCK)
+                    .noOcclusion());
+
+    /**
+     * The Dial Home Device, {@code stargate:stargate_dhd}: 38 keys and the dome, dials the nearest gate.
+     *
+     * <p><i>FR —</i> Le DHD, {@code stargate:stargate_dhd} : 38 touches et le dôme, compose la porte la plus
+     * proche.
+     */
+    public static final DeferredBlock<StargateDhdBlock> STARGATE_DHD = BLOCKS.registerBlock("stargate_dhd",
+            StargateDhdBlock::new,
+            p -> p.mapColor(MapColor.STONE)
+                    .strength(3.5f, 1200.0f)
+                    .sound(SoundType.STONE)
                     .noOcclusion());
 
     private ModBlocks() {

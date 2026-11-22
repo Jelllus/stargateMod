@@ -9,6 +9,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.stargate.mod.StargateMod;
 import com.stargate.mod.stargate.address.StargateAddress;
 import com.stargate.mod.stargate.address.StargateSymbol;
+import com.stargate.mod.stargate.text.SymbolText;
 import com.stargate.mod.stargate.connection.ConnectionManager;
 import com.stargate.mod.stargate.connection.DialResult;
 import com.stargate.mod.stargate.network.StargateNetwork;
@@ -104,7 +105,8 @@ public final class StargateCommand {
         CommandSourceStack src = ctx.getSource();
         GlobalPos pos = GlobalPos.of(src.getLevel().dimension(), BlockPos.containing(src.getPosition()));
         GateRecord gate = StargateNetwork.registerGate(src.getServer(), pos);
-        src.sendSuccess(() -> Component.literal("Gate " + gate.address() + " at " + describe(gate.location())), true);
+        src.sendSuccess(() -> Component.literal("Gate ").append(SymbolText.address(gate.address()))
+                .append(" at " + describe(gate.location())), true);
         return 1;
     }
 
@@ -117,7 +119,8 @@ public final class StargateCommand {
         }
         ConnectionManager cm = StargateNetwork.connections();
         for (GateRecord g : gates) {
-            src.sendSuccess(() -> Component.literal(g.address() + "  " + describe(g.location()) + "  " + cm.getState(g.id())), false);
+            src.sendSuccess(() -> SymbolText.address(g.address())
+                    .append(Component.literal("  " + describe(g.location()) + "  " + cm.getState(g.id()))), false);
         }
         return gates.size();
     }
@@ -128,7 +131,7 @@ public final class StargateCommand {
         ConnectionManager cm = StargateNetwork.connections();
         StargateRegistry registry = StargateNetwork.registry(src.getServer());
         StringBuilder sb = new StringBuilder()
-                .append(gate.address()).append(": ").append(cm.getState(gate.id()))
+                .append(": ").append(cm.getState(gate.id()))
                 .append(", chevrons ").append(cm.getEncoded(gate.id()));
         cm.getConnection(gate.id()).ifPresent(c -> {
             boolean outgoing = c.isSource(gate.id());
@@ -136,7 +139,7 @@ public final class StargateCommand {
             sb.append(outgoing ? ", outgoing to " : ", incoming from ").append(other);
         });
         cm.getRemainingOpenTicks(gate.id()).ifPresent(t -> sb.append(", closes in ").append(t / 20).append("s"));
-        src.sendSuccess(() -> Component.literal(sb.toString()), false);
+        src.sendSuccess(() -> SymbolText.address(gate.address()).append(Component.literal(sb.toString())), false);
         return 1;
     }
 
