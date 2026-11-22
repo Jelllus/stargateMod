@@ -64,6 +64,29 @@ public final class StargateConfig {
 
     static {
         BUILDER.pop();
+        BUILDER.push("kawoosh");
+    }
+
+    /**
+     * Whether the kawoosh vaporises the blocks it reaches.
+     *
+     * <p><i>FR —</i> Indique si le kawoosh désintègre les blocs qu'il atteint.
+     */
+    public static final ModConfigSpec.BooleanValue DESTROYS_BLOCKS = BUILDER
+            .comment("The kawoosh vaporises the blocks it reaches (unbreakable blocks and gate blocks are spared)")
+            .define("destroysBlocks", true);
+
+    /**
+     * Whether the kawoosh also kills players in creative mode.
+     *
+     * <p><i>FR —</i> Indique si le kawoosh tue aussi les joueurs en mode créatif.
+     */
+    public static final ModConfigSpec.BooleanValue KILLS_CREATIVE = BUILDER
+            .comment("The kawoosh also kills players in creative mode")
+            .define("killsCreative", false);
+
+    static {
+        BUILDER.pop();
     }
 
     /**

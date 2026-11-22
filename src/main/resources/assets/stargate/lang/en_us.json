@@ -10,5 +10,6 @@
   "stargate.state.engaging": "Engaging",
   "stargate.state.open": "Open",
   "stargate.state.closing": "Closing",
-  "block.stargate.naquadah_block": "Naquadah Block"
+  "block.stargate.naquadah_block": "Naquadah Block",
+  "death.attack.stargate.kawoosh": "%1$s was vaporised by an unstable vortex"
 }

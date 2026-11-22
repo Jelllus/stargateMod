@@ -10,5 +10,6 @@
   "stargate.state.engaging": "Vortex en formation",
   "stargate.state.open": "Ouverte",
   "stargate.state.closing": "Fermeture",
-  "block.stargate.naquadah_block": "Bloc de naquadah"
+  "block.stargate.naquadah_block": "Bloc de naquadah",
+  "death.attack.stargate.kawoosh": "%1$s a été désintégré par un vortex instable"
 }

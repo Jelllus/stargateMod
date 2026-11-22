@@ -10,6 +10,7 @@ import com.stargate.mod.stargate.connection.GateListener;
 import com.stargate.mod.stargate.connection.StargateConnection;
 import com.stargate.mod.stargate.connection.WormholeState;
 import com.stargate.mod.stargate.network.StargateRegistry.GateRecord;
+import com.stargate.mod.stargate.transport.TransportHandler;
 import com.stargate.mod.stargate.address.StargateSymbol;
 import com.stargate.mod.stargate.block.StargateBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -159,15 +160,17 @@ public final class StargateNetwork {
     }
 
     /**
-     * Advances every gate by one tick, then pushes changed gates to their block entities.
+     * Advances every gate by one tick, runs the kawoosh and transport ({@link TransportHandler}), then pushes
+     * changed gates to their block entities.
      *
-     * <p><i>FR —</i> Fait avancer toutes les portes d'un tick, puis transmet les portes modifiées à leurs
-     * block entities.
+     * <p><i>FR —</i> Fait avancer toutes les portes d'un tick, exécute le kawoosh et le transport
+     * ({@link TransportHandler}), puis transmet les portes modifiées à leurs block entities.
      */
     @SubscribeEvent
     static void onServerTick(ServerTickEvent.Post event) {
         if (connections != null) {
             connections.tick();
+            TransportHandler.tick(event.getServer(), connections, registry(event.getServer()));
             flushDirtyGates(event.getServer());
         }
     }
@@ -181,6 +184,7 @@ public final class StargateNetwork {
         connections = null;
         server = null;
         DIRTY_GATES.clear();
+        TransportHandler.clear();
     }
 
     /**

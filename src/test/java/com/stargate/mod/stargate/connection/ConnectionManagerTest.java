@@ -244,6 +244,19 @@ class ConnectionManagerTest {
         assertEquals(8, cm.getEncoded(d).size());
     }
 
+    @Test
+    void listsConnectionsAndPhaseAge() {
+        assertTrue(cm.getConnections().isEmpty());
+        manualConnect(a, addrB);
+        assertEquals(1, cm.getConnections().size(), "once per wormhole, not per gate");
+        assertEquals(a, cm.getConnections().getFirst().source());
+        assertEquals(Optional.of(0L), cm.getTicksInState(b));
+        ticks(3);
+        assertEquals(Optional.of(3L), cm.getTicksInState(a));
+        cm.disconnect(a);
+        assertTrue(cm.getConnections().isEmpty(), "closing wormholes are not listed");
+    }
+
     private void manualConnect(UUID from, StargateAddress to) {
         to.symbols().forEach(s -> cm.encode(from, s));
         assertEquals(DialResult.LOCKED, cm.encode(from, StargateSymbol.POINT_OF_ORIGIN));

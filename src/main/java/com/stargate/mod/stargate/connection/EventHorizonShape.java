@@ -89,6 +89,22 @@ public final class EventHorizonShape {
     }
 
     /**
+     * Shape of the kawoosh across the horizon: 1 at the centre, 0 at the rim. Multiply by
+     * {@link #kawooshLength(float)} to get how far it reaches at a given radius. Shared by the renderer and the
+     * lethal zone, so what you see is what kills.
+     *
+     * <p><i>FR —</i> Profil du kawoosh sur l'horizon : 1 au centre, 0 au bord. À multiplier par
+     * {@link #kawooshLength(float)} pour obtenir sa portée à un rayon donné. Partagé par le rendu et la zone
+     * mortelle : ce qu'on voit est ce qui tue.
+     *
+     * @param rn normalised radius, 0 to 1 / rayon normalisé, de 0 à 1
+     * @return 0 to 1
+     */
+    public static float kawooshProfile(float rn) {
+        return (float) Math.pow(Math.max(0f, 1f - rn * rn), 1.5);
+    }
+
+    /**
      * Fraction of {@link #RADIUS} the surface covers: grows in as the vortex forms, shrinks out on closing.
      *
      * <p><i>FR —</i> Fraction de {@link #RADIUS} couverte par la surface : elle s'étend à la formation du
@@ -146,7 +162,7 @@ public final class EventHorizonShape {
             case ENGAGING -> {
                 float p = clamp01(age / engageTicks);
                 float jet = kawooshLength(p);
-                float bulb = (float) Math.pow(Math.max(0f, 1f - rn * rn), 1.5);
+                float bulb = kawooshProfile(rn);
                 float turbulence = jet * 0.12f * (float) Math.sin(6 * theta + 9 * rn - age * 0.8f) * rn * edge;
                 float rippleAmp = p < BURST_END ? 0.35f : lerp(0.35f, 0.12f, (p - BURST_END) / (1f - BURST_END));
                 float ripple = rippleAmp * (float) Math.sin(9 * rn - age * 0.6f) * edge;
