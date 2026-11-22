@@ -24,7 +24,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 /**
- * Operator commands to exercise gates before they exist as blocks. Gates are named by their address.
+ * Operator commands to exercise gates, with or without a {@code stargate:stargate} block. Gates are named
+ * by their address. {@code create} and {@code remove} only touch the registry: a block left in place
+ * registers itself again when its chunk reloads.
  *
  * <pre>
  * /stargate create                     register a gate at your position
@@ -37,8 +39,9 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
  * /stargate remove &lt;gate&gt;
  * </pre>
  *
- * <p><i>FR —</i> Commandes d'opérateur pour tester les portes avant qu'elles existent en bloc. Les portes
- * sont désignées par leur adresse.
+ * <p><i>FR —</i> Commandes d'opérateur pour manipuler les portes, avec ou sans bloc
+ * {@code stargate:stargate}. Les portes sont désignées par leur adresse. {@code create} et {@code remove}
+ * ne touchent qu'au registre : un bloc laissé en place se réenregistre au rechargement de son chunk.
  *
  * <pre>
  * /stargate create                     enregistre une porte à votre position

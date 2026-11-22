@@ -1,0 +1,14 @@
+{
+  "block.stargate.stargate_control": "Contrôle de porte des étoiles",
+  "block.stargate.stargate_chevron": "Chevron de porte des étoiles",
+  "stargate.gate.incomplete": "Porte incomplète · %s/%s blocs du cadre",
+  "stargate.gate.status": "Porte %s · %s · %s chevron(s)",
+  "stargate.gate.outgoing": " · → %s",
+  "stargate.gate.incoming": " · ← %s",
+  "stargate.state.idle": "Inactive",
+  "stargate.state.dialing": "Numérotation",
+  "stargate.state.engaging": "Vortex en formation",
+  "stargate.state.open": "Ouverte",
+  "stargate.state.closing": "Fermeture",
+  "block.stargate.naquadah_block": "Bloc de naquadah"
+}

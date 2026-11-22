@@ -1,0 +1,14 @@
+{
+  "block.stargate.stargate_control": "Stargate Control",
+  "block.stargate.stargate_chevron": "Stargate Chevron",
+  "stargate.gate.incomplete": "Incomplete stargate · %s/%s frame blocks",
+  "stargate.gate.status": "Stargate %s · %s · %s chevron(s)",
+  "stargate.gate.outgoing": " · → %s",
+  "stargate.gate.incoming": " · ← %s",
+  "stargate.state.idle": "Idle",
+  "stargate.state.dialing": "Dialing",
+  "stargate.state.engaging": "Engaging",
+  "stargate.state.open": "Open",
+  "stargate.state.closing": "Closing",
+  "block.stargate.naquadah_block": "Naquadah Block"
+}

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "formed=false,lit=false": {
+      "model": "stargate:block/stargate_chevron"
+    },
+    "formed=false,lit=true": {
+      "model": "stargate:block/stargate_chevron_lit"
+    },
+    "formed=true,lit=false": {
+      "model": "stargate:block/frame_hidden"
+    },
+    "formed=true,lit=true": {
+      "model": "stargate:block/frame_hidden"
+    }
+  }
+}
