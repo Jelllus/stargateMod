@@ -33,7 +33,7 @@ displayName="${mod_name}" #mandatory
 #logoFile="examplemod.png" #optional
 
 # A text field displayed in the mod UI
-#credits="" #optional
+credits="Gate model: \"Stargate\" by Chaitanya Krishnan (https://sketchfab.com/chaitanyak), CC-BY-4.0, https://sketchfab.com/3d-models/stargate-jp4wKz6tRk1kpemRWywOSHx4ogK - converted to OBJ and rescaled."
 
 # The authors of the mod, displayed in the mod UI (optional)
 #authors=""

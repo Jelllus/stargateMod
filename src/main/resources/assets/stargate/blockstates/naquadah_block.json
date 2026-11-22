@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "formed=false": {
+      "model": "stargate:block/naquadah_block"
+    },
+    "formed=true": {
+      "model": "stargate:block/frame_hidden"
+    }
+  }
+}

@@ -180,6 +180,38 @@ public final class ConnectionManager {
         return Optional.of((int) Math.max(0, timings.maxOpenTicks() - g.ticksInState()));
     }
 
+    /**
+     * Ticks since the gate entered its current state.
+     *
+     * <p><i>FR —</i> Ticks écoulés depuis l'entrée de la porte dans son état actuel.
+     *
+     * @param gate the gate / la porte
+     * @return ticks, or empty for an idle gate the manager doesn't track / ticks, ou vide pour une porte
+     *         inactive que le gestionnaire ne suit pas
+     */
+    public Optional<Long> getTicksInState(UUID gate) {
+        Gate g = gates.get(gate);
+        return g == null ? Optional.empty() : Optional.of(g.ticksInState());
+    }
+
+    /**
+     * Every wormhole currently linked (vortex forming or open), once each.
+     *
+     * <p><i>FR —</i> Tous les trous de ver actuellement reliés (vortex en formation ou ouverts), une fois
+     * chacun.
+     *
+     * @return a new list / une nouvelle liste
+     */
+    public List<StargateConnection> getConnections() {
+        List<StargateConnection> out = new ArrayList<>();
+        for (Gate g : gates.values()) {
+            if (g.connection != null && g.connection.isSource(g.id) && g.state.isConnected()) {
+                out.add(g.connection);
+            }
+        }
+        return out;
+    }
+
     // ---------------------------------------------------------------- commands / commandes
 
     /**

@@ -10,25 +10,39 @@ import com.stargate.mod.stargate.connection.GateListener;
 import com.stargate.mod.stargate.connection.StargateConnection;
 import com.stargate.mod.stargate.connection.WormholeState;
 import com.stargate.mod.stargate.network.StargateRegistry.GateRecord;
+import com.stargate.mod.stargate.transport.TransportHandler;
+import com.stargate.mod.stargate.address.StargateSymbol;
+import com.stargate.mod.stargate.block.StargateBlockEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
  * Server-side entry point for gates: owns the {@link ConnectionManager} for the running server, ticks it,
  * and keeps it in step with the {@link StargateRegistry}.
  *
+ * <p>After each tick, gates that changed are pushed to their {@link StargateBlockEntity} (if loaded),
+ * which syncs them to clients.
+ *
  * <p>Wormholes are not saved: they all close when the server stops.
  *
  * <p><i>FR —</i> Point d'entrée côté serveur pour les portes : possède le {@link ConnectionManager} du
  * serveur en cours, le fait avancer à chaque tick, et le garde en phase avec le {@link StargateRegistry}.
+ *
+ * <p>Après chaque tick, les portes modifiées sont transmises à leur {@link StargateBlockEntity} (s'il est
+ * chargé), qui les synchronise avec les clients.
  *
  * <p>Les trous de ver ne sont pas sauvegardés : ils se ferment tous à l'arrêt du serveur.
  */
@@ -65,6 +79,17 @@ public final class StargateNetwork {
             throw new IllegalStateException("Stargate network is not running");
         }
         return connections;
+    }
+
+    /**
+     * The connection manager, if a server is running and has finished starting.
+     *
+     * <p><i>FR —</i> Le gestionnaire de connexions, si un serveur tourne et a fini de démarrer.
+     *
+     * @return the manager, or empty / le gestionnaire, ou vide
+     */
+    public static Optional<ConnectionManager> running() {
+        return Optional.ofNullable(connections);
     }
 
     /**
@@ -130,15 +155,23 @@ public final class StargateNetwork {
             }
         };
         connections = new ConnectionManager(directory, StargateConfig.timings());
-        connections.setListener(new LoggingListener());
+        connections.setListener(new SyncListener());
         StargateMod.LOGGER.info("Stargate network started with {} gate(s)", registry.all().size());
     }
 
-    /** Advances every gate by one tick. / <i>FR —</i> Fait avancer toutes les portes d'un tick. */
+    /**
+     * Advances every gate by one tick, runs the kawoosh and transport ({@link TransportHandler}), then pushes
+     * changed gates to their block entities.
+     *
+     * <p><i>FR —</i> Fait avancer toutes les portes d'un tick, exécute le kawoosh et le transport
+     * ({@link TransportHandler}), puis transmet les portes modifiées à leurs block entities.
+     */
     @SubscribeEvent
     static void onServerTick(ServerTickEvent.Post event) {
         if (connections != null) {
             connections.tick();
+            TransportHandler.tick(event.getServer(), connections, registry(event.getServer()));
+            flushDirtyGates(event.getServer());
         }
     }
 
@@ -150,22 +183,64 @@ public final class StargateNetwork {
         }
         connections = null;
         server = null;
+        DIRTY_GATES.clear();
+        TransportHandler.clear();
     }
 
     /**
-     * Placeholder until gates have a block entity to drive visuals and sounds.
-     *
-     * <p><i>FR —</i> Solution provisoire en attendant que les portes aient un block entity pour l'affichage
-     * et les sons.
+     * Gates changed since the last flush. Batched so that a burst of events (e.g. the 7 chevrons an
+     * incoming gate lights at once) sends one update per gate per tick.
+     * <i>FR —</i> Portes modifiées depuis le dernier envoi. Regroupées pour qu'une rafale d'événements (par
+     * exemple les 7 chevrons qu'une porte entrante allume d'un coup) n'envoie qu'une mise à jour par porte
+     * et par tick.
      */
-    private static final class LoggingListener implements GateListener {
+    private static final Set<UUID> DIRTY_GATES = new LinkedHashSet<>();
+
+    /**
+     * Refreshes the block entity of every changed gate whose chunk is loaded. Unloaded gates catch up when
+     * their chunk loads ({@link StargateBlockEntity#onLoad()}).
+     *
+     * <p><i>FR —</i> Rafraîchit le block entity de chaque porte modifiée dont le chunk est chargé. Les
+     * portes non chargées se remettent à jour au chargement de leur chunk
+     * ({@link StargateBlockEntity#onLoad()}).
+     */
+    private static void flushDirtyGates(MinecraftServer server) {
+        if (DIRTY_GATES.isEmpty()) {
+            return;
+        }
+        StargateRegistry registry = registry(server);
+        for (UUID id : List.copyOf(DIRTY_GATES)) {
+            registry.get(id).ifPresent(record -> {
+                ServerLevel level = server.getLevel(record.location().dimension());
+                BlockPos pos = record.location().pos();
+                if (level != null && level.isLoaded(pos) && level.getBlockEntity(pos) instanceof StargateBlockEntity gate) {
+                    gate.refreshFromNetwork(false);
+                }
+            });
+        }
+        DIRTY_GATES.clear();
+    }
+
+    /**
+     * Marks touched gates for the next flush, and logs at debug level.
+     *
+     * <p><i>FR —</i> Marque les portes touchées pour le prochain envoi, et journalise en niveau debug.
+     */
+    private static final class SyncListener implements GateListener {
         @Override
         public void onStateChanged(UUID gate, WormholeState from, WormholeState to) {
+            DIRTY_GATES.add(gate);
             StargateMod.LOGGER.debug("Gate {}: {} -> {}", gate, from, to);
         }
 
         @Override
+        public void onChevronEncoded(UUID gate, int chevron, StargateSymbol symbol, boolean incoming) {
+            DIRTY_GATES.add(gate);
+        }
+
+        @Override
         public void onDialFailed(UUID gate, DialResult reason) {
+            DIRTY_GATES.add(gate);
             StargateMod.LOGGER.debug("Gate {}: dial failed ({})", gate, reason);
         }
 
@@ -176,6 +251,8 @@ public final class StargateNetwork {
 
         @Override
         public void onConnectionClosed(StargateConnection connection, CloseReason reason) {
+            DIRTY_GATES.add(connection.source());
+            DIRTY_GATES.add(connection.target());
             StargateMod.LOGGER.debug("Wormhole closed {} -> {} ({})", connection.source(), connection.target(), reason);
         }
     }

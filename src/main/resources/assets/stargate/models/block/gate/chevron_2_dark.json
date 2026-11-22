@@ -1,0 +1,11 @@
+{
+  "loader": "neoforge:obj",
+  "model": "stargate:models/block/gate/chevron_2.obj",
+  "automatic_culling": false,
+  "textures": {
+    "ring": "stargate:block/gate_ring",
+    "white": "stargate:block/gate_white",
+    "horizon": "stargate:block/event_horizon",
+    "particle": "stargate:block/gate_ring"
+  }
+}

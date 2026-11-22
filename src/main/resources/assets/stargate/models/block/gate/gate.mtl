@@ -1,0 +1,22 @@
+# Materials for the formed gate (from "Stargate" by Chaitanya Krishnan, CC-BY-4.0).
+# Ka > 0 makes a material emissive (NeoForge OBJ loader, emissive_ambient).
+
+newmtl gate
+Kd 1 1 1
+Ka 0 0 0
+map_Kd #ring
+
+newmtl gate_grey
+Kd 0.45 0.45 0.45
+Ka 0 0 0
+map_Kd #white
+
+newmtl glow
+Kd 0.30 0.15 0.03
+Ka 0 0 0
+map_Kd #white
+
+newmtl event_horizon
+Kd 1 1 1
+Ka 1 1 1
+map_Kd #horizon

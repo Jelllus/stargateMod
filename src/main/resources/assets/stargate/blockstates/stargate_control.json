@@ -1,0 +1,335 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "formed": "false",
+        "active": "false"
+      },
+      "apply": {
+        "model": "stargate:block/stargate_control"
+      }
+    },
+    {
+      "when": {
+        "formed": "false",
+        "active": "true"
+      },
+      "apply": {
+        "model": "stargate:block/stargate_control_active"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x"
+      },
+      "apply": {
+        "model": "stargate:block/gate/ring"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x",
+        "chevrons": "1|2|3|4|5|6|7"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_1_lit"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x",
+        "chevrons": "0"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_1_dark"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x",
+        "chevrons": "2|3|4|5|6|7"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_2_lit"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x",
+        "chevrons": "0|1"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_2_dark"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x",
+        "chevrons": "3|4|5|6|7"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_3_lit"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x",
+        "chevrons": "0|1|2"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_3_dark"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x",
+        "chevrons": "4|5|6|7"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_4_lit"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x",
+        "chevrons": "0|1|2|3"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_4_dark"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x",
+        "chevrons": "5|6|7"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_5_lit"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x",
+        "chevrons": "0|1|2|3|4"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_5_dark"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x",
+        "chevrons": "6|7"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_6_lit"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x",
+        "chevrons": "0|1|2|3|4|5"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_6_dark"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x",
+        "chevrons": "7"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_7_lit"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "x",
+        "chevrons": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_7_dark"
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z"
+      },
+      "apply": {
+        "model": "stargate:block/gate/ring",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z",
+        "chevrons": "1|2|3|4|5|6|7"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_1_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z",
+        "chevrons": "0"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_1_dark",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z",
+        "chevrons": "2|3|4|5|6|7"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_2_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z",
+        "chevrons": "0|1"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_2_dark",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z",
+        "chevrons": "3|4|5|6|7"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_3_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z",
+        "chevrons": "0|1|2"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_3_dark",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z",
+        "chevrons": "4|5|6|7"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_4_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z",
+        "chevrons": "0|1|2|3"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_4_dark",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z",
+        "chevrons": "5|6|7"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_5_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z",
+        "chevrons": "0|1|2|3|4"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_5_dark",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z",
+        "chevrons": "6|7"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_6_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z",
+        "chevrons": "0|1|2|3|4|5"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_6_dark",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z",
+        "chevrons": "7"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_7_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "formed": "true",
+        "axis": "z",
+        "chevrons": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "stargate:block/gate/chevron_7_dark",
+        "y": 90
+      }
+    }
+  ]
+}
