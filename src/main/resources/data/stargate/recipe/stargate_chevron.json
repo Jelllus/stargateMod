@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "L": "stargate:naquadah_ingot",
+    "C": "stargate:chevron"
+  },
+  "pattern": [
+    "LCL",
+    "LLL",
+    "LLL"
+  ],
+  "result": {
+    "id": "stargate:stargate_chevron"
+  }
+}

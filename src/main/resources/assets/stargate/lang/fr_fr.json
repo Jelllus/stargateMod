@@ -25,5 +25,13 @@
   "stargate.dial.target_busy": "La porte appelée est occupée",
   "stargate.dial.timed_out": "Numérotation expirée",
   "stargate.dial.aborted": "Numérotation annulée",
-  "item.stargate.tab_icon": "Point d'origine"
+  "item.stargate.tab_icon": "Point d'origine",
+  "block.stargate.naquadah_ore": "Minerai de naquadah",
+  "block.stargate.raw_naquadah_block": "Bloc de naquadah brut",
+  "item.stargate.raw_naquadah": "Naquadah brut",
+  "item.stargate.naquadah_ingot": "Lingot de naquadah",
+  "item.stargate.naquadah_nugget": "Pépite de naquadah",
+  "block.stargate.blue_crystal_cluster": "Amas de cristal bleu",
+  "item.stargate.blue_crystal_shard": "Éclat de cristal bleu",
+  "item.stargate.chevron": "Chevron"
 }

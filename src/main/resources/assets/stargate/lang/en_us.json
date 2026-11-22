@@ -25,5 +25,13 @@
   "stargate.dial.target_busy": "The dialed gate is busy",
   "stargate.dial.timed_out": "Dialing timed out",
   "stargate.dial.aborted": "Dialing aborted",
-  "item.stargate.tab_icon": "Point of Origin"
+  "item.stargate.tab_icon": "Point of Origin",
+  "block.stargate.naquadah_ore": "Naquadah Ore",
+  "block.stargate.raw_naquadah_block": "Block of Raw Naquadah",
+  "item.stargate.raw_naquadah": "Raw Naquadah",
+  "item.stargate.naquadah_ingot": "Naquadah Ingot",
+  "item.stargate.naquadah_nugget": "Naquadah Nugget",
+  "block.stargate.blue_crystal_cluster": "Blue Crystal Cluster",
+  "item.stargate.blue_crystal_shard": "Blue Crystal Shard",
+  "item.stargate.chevron": "Chevron"
 }
