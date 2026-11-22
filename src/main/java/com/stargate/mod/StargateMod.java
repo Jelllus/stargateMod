@@ -2,6 +2,8 @@ package com.stargate.mod;
 
 import org.slf4j.Logger;
 
+import com.stargate.mod.stargate.StargateConfig;
+
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -84,6 +86,7 @@ public class StargateMod {
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.LOCAL, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.SYNCED, StargateConfig.SPEC);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
