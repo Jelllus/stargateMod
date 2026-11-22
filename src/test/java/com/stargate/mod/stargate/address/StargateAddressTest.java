@@ -7,6 +7,12 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests for {@link StargateAddress} and {@link AddressValidator}: parsing, validation rules, random draws.
+ *
+ * <p><i>FR —</i> Tests de {@link StargateAddress} et {@link AddressValidator} : lecture, règles de
+ * validation, tirages aléatoires.
+ */
 class StargateAddressTest {
     @Test
     void parsesAndPrints() {

@@ -36,6 +36,20 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
  * /stargate close &lt;gate&gt;
  * /stargate remove &lt;gate&gt;
  * </pre>
+ *
+ * <p><i>FR —</i> Commandes d'opérateur pour tester les portes avant qu'elles existent en bloc. Les portes
+ * sont désignées par leur adresse.
+ *
+ * <pre>
+ * /stargate create                     enregistre une porte à votre position
+ * /stargate list                       liste les portes et leur état
+ * /stargate status &lt;porte&gt;             état détaillé d'une porte
+ * /stargate dial &lt;porte&gt; &lt;adresse&gt;     numérotation automatique
+ * /stargate encode &lt;porte&gt; &lt;symbole&gt;   numérotation manuelle, un symbole (0 = point d'origine)
+ * /stargate abort &lt;porte&gt;              annule une numérotation
+ * /stargate close &lt;porte&gt;              ferme le trou de ver sortant
+ * /stargate remove &lt;porte&gt;             retire une porte
+ * </pre>
  */
 @EventBusSubscriber(modid = StargateMod.MODID)
 public final class StargateCommand {
@@ -47,11 +61,20 @@ public final class StargateCommand {
     private StargateCommand() {
     }
 
+    /** Hooks the command into NeoForge. / <i>FR —</i> Branche la commande sur NeoForge. */
     @SubscribeEvent
     static void onRegisterCommands(RegisterCommandsEvent event) {
         register(event.getDispatcher());
     }
 
+    /**
+     * Registers {@code /stargate} and its sub-commands; requires gamemaster permission.
+     *
+     * <p><i>FR —</i> Enregistre {@code /stargate} et ses sous-commandes ; nécessite la permission
+     * d'opérateur (gamemaster).
+     *
+     * @param dispatcher the server command dispatcher / le répartiteur de commandes du serveur
+     */
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("stargate")
                 .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
@@ -144,6 +167,7 @@ public final class StargateCommand {
         return 1;
     }
 
+    /** Resolves the {@code gate} argument (an address) to a registered gate. / <i>FR —</i> Résout l'argument {@code gate} (une adresse) en porte enregistrée. */
     private static GateRecord gate(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         StargateAddress address = StargateAddress.parse(StringArgumentType.getString(ctx, "gate"))
                 .orElseThrow(BAD_ADDRESS::create);

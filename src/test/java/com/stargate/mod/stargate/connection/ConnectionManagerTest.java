@@ -15,8 +15,15 @@ import java.util.UUID;
 import static com.stargate.mod.stargate.connection.WormholeState.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests for the {@link ConnectionManager} state machine, with short timings and an in-memory directory of
+ * three gates.
+ *
+ * <p><i>FR —</i> Tests de la machine à états de {@link ConnectionManager}, avec des durées courtes et un
+ * annuaire en mémoire de trois portes.
+ */
 class ConnectionManagerTest {
-    /** chevron 2, engage 5, open 100, close 3, manual timeout 50 */
+    /** chevron 2, engage 5, open 100, close 3, manual timeout 50 / <i>FR —</i> mêmes valeurs, en ticks. */
     private static final Timings T = new Timings(2, 5, 100, 3, 50);
 
     private final Map<StargateAddress, UUID> gates = new HashMap<>();
