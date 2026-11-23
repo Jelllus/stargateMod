@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 
 import com.stargate.mod.registry.ModBlockEntities;
 import com.stargate.mod.registry.ModBlocks;
+import com.stargate.mod.registry.ModEntities;
 import com.stargate.mod.registry.ModItems;
 import com.stargate.mod.stargate.StargateConfig;
 
@@ -99,6 +100,7 @@ public class StargateMod {
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlockEntities.register(modEventBus);
+        ModEntities.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
@@ -135,6 +137,9 @@ public class StargateMod {
             event.accept(ModItems.STARGATE_CONTROL);
             event.accept(ModItems.STARGATE_CHEVRON);
             event.accept(ModItems.NAQUADAH_BLOCK);
+        }
+        if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
+            event.accept(ModItems.REPLICATOR_SPAWN_EGG);
         }
     }
 

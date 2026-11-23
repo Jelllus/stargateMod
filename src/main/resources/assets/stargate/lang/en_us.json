@@ -11,5 +11,7 @@
   "stargate.state.open": "Open",
   "stargate.state.closing": "Closing",
   "block.stargate.naquadah_block": "Naquadah Block",
-  "death.attack.stargate.kawoosh": "%1$s was vaporised by an unstable vortex"
+  "death.attack.stargate.kawoosh": "%1$s was vaporised by an unstable vortex",
+  "entity.stargate.replicator": "Replicator",
+  "item.stargate.replicator_spawn_egg": "Replicator Spawn Egg"
 }

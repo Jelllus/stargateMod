@@ -2,6 +2,7 @@ package com.stargate.mod.registry;
 
 import com.stargate.mod.StargateMod;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -34,6 +35,12 @@ public final class ModItems {
      */
     public static final DeferredItem<BlockItem> NAQUADAH_BLOCK =
             ITEMS.registerSimpleBlockItem("naquadah_block", ModBlocks.NAQUADAH_BLOCK);
+
+    /**
+     * Spawn egg of the {@link ModEntities#REPLICATOR}. / <i>FR —</i> Œuf d'apparition du {@link ModEntities#REPLICATOR}.
+     */
+    public static final DeferredItem<SpawnEggItem> REPLICATOR_SPAWN_EGG =
+            ITEMS.registerItem("replicator_spawn_egg", SpawnEggItem::new, p -> p.spawnEgg(ModEntities.REPLICATOR.get()));
 
     private ModItems() {
     }

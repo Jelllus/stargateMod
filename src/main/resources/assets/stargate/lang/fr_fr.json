@@ -11,5 +11,7 @@
   "stargate.state.open": "Ouverte",
   "stargate.state.closing": "Fermeture",
   "block.stargate.naquadah_block": "Bloc de naquadah",
-  "death.attack.stargate.kawoosh": "%1$s a été désintégré par un vortex instable"
+  "death.attack.stargate.kawoosh": "%1$s a été désintégré par un vortex instable",
+  "entity.stargate.replicator": "Réplicateur",
+  "item.stargate.replicator_spawn_egg": "Œuf d'apparition de réplicateur"
 }

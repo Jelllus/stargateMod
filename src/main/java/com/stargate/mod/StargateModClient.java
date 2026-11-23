@@ -1,7 +1,9 @@
 package com.stargate.mod;
 
 import com.stargate.mod.client.EventHorizonRenderer;
+import com.stargate.mod.client.replicator.ReplicatorRenderer;
 import com.stargate.mod.registry.ModBlockEntities;
+import com.stargate.mod.registry.ModEntities;
 import net.minecraft.client.Minecraft;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.api.distmarker.Dist;
@@ -41,13 +43,15 @@ public class StargateModClient {
     }
 
     /**
-     * Registers the event horizon renderer on the gate's block entity.
+     * Registers the event horizon renderer on the gate's block entity, and the replicator renderer.
      *
-     * <p><i>FR —</i> Enregistre le rendu de l'horizon des événements sur le block entity de la porte.
+     * <p><i>FR —</i> Enregistre le rendu de l'horizon des événements sur le block entity de la porte, et le
+     * rendu du réplicateur.
      */
     @SubscribeEvent
     static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.STARGATE.get(), EventHorizonRenderer::new);
+        event.registerEntityRenderer(ModEntities.REPLICATOR.get(), ReplicatorRenderer::new);
     }
 
     @SubscribeEvent
