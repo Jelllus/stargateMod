@@ -1,7 +1,10 @@
 package com.stargate.mod;
 
 import com.stargate.mod.client.DhdRenderer;
+import com.stargate.mod.client.StaffWeaponClientExtensions;
 import com.stargate.mod.client.StargateRenderer;
+import com.stargate.mod.registry.ModItems;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import com.stargate.mod.client.replicator.ReplicatorRenderer;
 import com.stargate.mod.registry.ModBlockEntities;
 import com.stargate.mod.registry.ModEntities;
@@ -51,5 +54,15 @@ public class StargateModClient {
         event.registerBlockEntityRenderer(ModBlockEntities.STARGATE.get(), StargateRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.DHD.get(), DhdRenderer::new);
         event.registerEntityRenderer(ModEntities.REPLICATOR.get(), ReplicatorRenderer::new);
+    }
+
+    /**
+     * Registers the staff weapon's first-person hold and recoil.
+     *
+     * <p><i>FR —</i> Enregistre la tenue et le recul de la lance à la première personne.
+     */
+    @SubscribeEvent
+    static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
+        event.registerItem(new StaffWeaponClientExtensions(), ModItems.STAFF_WEAPON.get());
     }
 }

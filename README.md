@@ -31,3 +31,9 @@ Replicator model (`assets/stargate/models/entity/replicator.obj`, `textures/enti
 https://sketchfab.com/3d-models/replicator-sg1-e8a67b78936d4092b954589c67214396 —
 licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/). Converted from glTF to OBJ
 (split into body and articulated legs, triangles merged into quads).
+
+Staff weapon model (`assets/stargate/models/item/staff_weapon/`, `textures/item/staff_weapon.png`):
+"Inspired by Stargate SG-1: Goa'Uld Staff Weapon" by Ska-Ara (https://sketchfab.com/ska-ara),
+https://sketchfab.com/3d-models/inspired-by-stargate-sg-1-goa-uld-staff-weapon-973f843c19ca4496b8a38106f2a96414 —
+licensed under CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/). Converted from glTF to OBJ
+with `tools/staff_glb2obj.py`, base colour texture downscaled to 1024 px.

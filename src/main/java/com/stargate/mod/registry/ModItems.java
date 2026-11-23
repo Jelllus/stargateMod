@@ -1,6 +1,8 @@
 package com.stargate.mod.registry;
 
 import com.stargate.mod.StargateMod;
+import com.stargate.mod.weapon.StaffWeaponItem;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.Item;
@@ -96,6 +98,12 @@ public final class ModItems {
      */
     public static final DeferredItem<SpawnEggItem> REPLICATOR_SPAWN_EGG =
             ITEMS.registerItem("replicator_spawn_egg", SpawnEggItem::new, p -> p.spawnEgg(ModEntities.REPLICATOR.get()));
+
+    /**
+     * Goa'uld staff weapon, fires fireballs. / <i>FR —</i> Lance Goa'uld, tire des boules de feu.
+     */
+    public static final DeferredItem<StaffWeaponItem> STAFF_WEAPON =
+            ITEMS.registerItem("staff_weapon", StaffWeaponItem::new, p -> p.stacksTo(1).rarity(Rarity.UNCOMMON));
 
     private ModItems() {
     }
