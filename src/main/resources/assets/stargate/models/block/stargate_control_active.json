@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "minecraft:block/prismarine"
+    "all": "stargate:block/stargate_control_active"
   }
 }

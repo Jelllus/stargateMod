@@ -21,12 +21,16 @@ import java.util.UUID;
  * {@link GateDirectory}, and time advances only through {@link #tick()}. Not thread-safe; call from the
  * server thread.
  *
- * <h2>Two ways to dial</h2>
+ * <h2>Dialing</h2>
+ * Each symbol is dialed like on the show: the inner ring spins (alternating direction) until the symbol is
+ * under the top chevron ({@link Timings#ticksPerSymbol()} per symbol), then the top chevron locks it
+ * ({@link Timings#chevronDelayTicks()}) and the next chevron lights. Symbols wait in a queue while the ring
+ * is busy. The connection is only attempted once the point of origin is locked, i.e. when every chevron is
+ * locked. The ring's movement is available through {@link #getRing(UUID)}.
  * <ul>
- *     <li>{@link #dial(UUID, StargateAddress)} — automatic (dialing computer): one chevron every
- *     {@link Timings#chevronDelayTicks()}, then the point of origin.</li>
- *     <li>{@link #encode(UUID, StargateSymbol)} — manual (DHD): each symbol locks immediately; encoding
- *     the point of origin attempts the connection.</li>
+ *     <li>{@link #dial(UUID, StargateAddress)} — automatic (dialing computer): queues the whole address and
+ *     the point of origin.</li>
+ *     <li>{@link #encode(UUID, StargateSymbol)} — manual (DHD): queues one symbol.</li>
  * </ul>
  * A failure at lock time resets the dialing gate to {@link WormholeState#IDLE} and is reported both as
  * the return value (manual) and through {@link GateListener#onDialFailed} (always).
@@ -38,12 +42,17 @@ import java.util.UUID;
  * retrouvées via un {@link GateDirectory}, et le temps n'avance que par {@link #tick()}. Non thread-safe ;
  * à appeler depuis le thread serveur.
  *
- * <h2>Deux façons de composer</h2>
+ * <h2>Numérotation</h2>
+ * Chaque symbole est composé comme dans la série : l'anneau intérieur tourne (sens alterné) jusqu'à amener
+ * le symbole sous le chevron du haut ({@link Timings#ticksPerSymbol()} par symbole), puis le chevron du haut
+ * le verrouille ({@link Timings#chevronDelayTicks()}) et le chevron suivant s'allume. Les symboles attendent
+ * dans une file tant que l'anneau est occupé. La connexion n'est tentée qu'une fois le point d'origine
+ * verrouillé, c'est-à-dire quand tous les chevrons sont verrouillés. Le mouvement de l'anneau est accessible
+ * via {@link #getRing(UUID)}.
  * <ul>
- *     <li>{@link #dial(UUID, StargateAddress)} — automatique (ordinateur de numérotation) : un chevron
- *     toutes les {@link Timings#chevronDelayTicks()}, puis le point d'origine.</li>
- *     <li>{@link #encode(UUID, StargateSymbol)} — manuelle (DHD) : chaque symbole se verrouille aussitôt ;
- *     encoder le point d'origine tente la connexion.</li>
+ *     <li>{@link #dial(UUID, StargateAddress)} — automatique (ordinateur de numérotation) : met en file toute
+ *     l'adresse et le point d'origine.</li>
+ *     <li>{@link #encode(UUID, StargateSymbol)} — manuelle (DHD) : met un symbole en file.</li>
  * </ul>
  * Un échec au verrouillage remet la porte qui compose à {@link WormholeState#IDLE} ; il est signalé par la
  * valeur de retour (en manuel) et par {@link GateListener#onDialFailed} (toujours).
@@ -54,6 +63,8 @@ public final class ConnectionManager {
     private GateListener listener = GateListener.NONE;
 
     private final Map<UUID, Gate> gates = new HashMap<>();
+    /** Kept while idle, so the ring stays where it stopped. / <i>FR —</i> Gardé à l'arrêt : l'anneau reste où il s'est arrêté. */
+    private final Map<UUID, RingMotion> rings = new HashMap<>();
     private long tick;
 
     /**
@@ -129,6 +140,61 @@ public final class ConnectionManager {
     public List<StargateSymbol> getEncoded(UUID gate) {
         Gate g = gates.get(gate);
         return g == null ? List.of() : List.copyOf(g.encoded);
+    }
+
+    /**
+     * Every symbol dialed so far, in order: locked, then the one the ring is bringing up, then the queued
+     * ones. This is what a DHD shows as pressed.
+     *
+     * <p><i>FR —</i> Tous les symboles composés jusqu'ici, dans l'ordre : verrouillés, puis celui que l'anneau
+     * amène, puis ceux en file. C'est ce qu'un DHD montre comme enfoncé.
+     *
+     * @param gate the gate / la porte
+     * @return a new list / une nouvelle liste
+     */
+    public List<StargateSymbol> getDialed(UUID gate) {
+        Gate g = gates.get(gate);
+        return g == null ? List.of() : g.dialed();
+    }
+
+    /**
+     * Movement of the gate's inner ring, in manager ticks ({@link #currentTick()}); at rest when not
+     * dialing.
+     *
+     * <p><i>FR —</i> Mouvement de l'anneau intérieur de la porte, en ticks du gestionnaire
+     * ({@link #currentTick()}) ; au repos hors numérotation.
+     *
+     * @param gate the gate / la porte
+     * @return the motion / le mouvement
+     */
+    public RingMotion getRing(UUID gate) {
+        return rings.getOrDefault(gate, RingMotion.rest(0));
+    }
+
+    /**
+     * Restores where a gate's ring stopped (e.g. after a server restart), unless the manager already knows.
+     *
+     * <p><i>FR —</i> Rétablit où l'anneau d'une porte s'est arrêté (par exemple après un redémarrage du
+     * serveur), sauf si le gestionnaire le sait déjà.
+     *
+     * @param gate     the gate / la porte
+     * @param position symbol under the top chevron / symbole sous le chevron du haut
+     */
+    public void restoreRing(UUID gate, double position) {
+        rings.putIfAbsent(gate, RingMotion.rest(position));
+    }
+
+    /**
+     * Whether the top chevron is locking a symbol right now.
+     *
+     * <p><i>FR —</i> Indique si le chevron du haut est en train de verrouiller un symbole.
+     *
+     * @param gate the gate / la porte
+     * @return {@code true} while locking / {@code true} pendant le verrouillage
+     */
+    public boolean isLocking(UUID gate) {
+        Gate g = gates.get(gate);
+        return g != null && g.inFlight != null && getRing(gate).isLocking(tick);
     }
 
     /**
@@ -236,20 +302,25 @@ public final class ConnectionManager {
         }
         g.pending.addAll(address.dialSequence());
         setState(g, WormholeState.DIALING);
+        g.automatic = true;
+        startNext(g);
         return DialResult.STARTED;
     }
 
     /**
-     * Encodes one symbol manually. Not allowed while an automatic dial is running on that gate.
+     * Dials one symbol manually: it is queued, and locked once the ring has brought it to the top. Not
+     * allowed while an automatic dial is running on that gate. Failures found when the point of origin
+     * locks (unknown address, busy target...) arrive later through {@link GateListener#onDialFailed}.
      *
-     * <p><i>FR —</i> Encode un symbole à la main. Interdit pendant une numérotation automatique sur cette
-     * porte.
+     * <p><i>FR —</i> Compose un symbole à la main : il est mis en file, puis verrouillé une fois amené en
+     * haut par l'anneau. Interdit pendant une numérotation automatique sur cette porte. Les échecs détectés au
+     * verrouillage du point d'origine (adresse inconnue, cible occupée...) arrivent plus tard via
+     * {@link GateListener#onDialFailed}.
      *
      * @param gate   the dialing gate / la porte qui compose
-     * @param symbol the symbol to lock / le symbole à verrouiller
-     * @return {@link DialResult#ENCODED}, {@link DialResult#LOCKED} after the point of origin, or the
-     *         failure / {@link DialResult#ENCODED}, {@link DialResult#LOCKED} après le point d'origine, ou
-     *         l'échec
+     * @param symbol the symbol to dial / le symbole à composer
+     * @return {@link DialResult#ENCODED} if queued, or the failure / {@link DialResult#ENCODED} si mis en
+     *         file, ou l'échec
      */
     public DialResult encode(UUID gate, StargateSymbol symbol) {
         Objects.requireNonNull(symbol, "symbol");
@@ -260,16 +331,22 @@ public final class ConnectionManager {
         if (g.state != WormholeState.IDLE && g.state != WormholeState.DIALING) {
             return DialResult.GATE_BUSY;
         }
-        if (!g.pending.isEmpty()) {
+        if (g.automatic) {
             return DialResult.GATE_BUSY;
         }
-        if (!AddressValidator.canEncode(g.encoded, symbol)) {
+        List<StargateSymbol> dialed = g.dialed();
+        // Nothing comes after the point of origin. / Rien ne vient après le point d'origine.
+        if (dialed.contains(StargateSymbol.POINT_OF_ORIGIN) || !AddressValidator.canEncode(dialed, symbol)) {
             return DialResult.INVALID_SYMBOL;
         }
         if (g.state == WormholeState.IDLE) {
             setState(g, WormholeState.DIALING);
         }
-        return lockChevron(g, symbol);
+        g.pending.add(symbol);
+        g.lastChevronTick = tick;
+        listener.onDialProgress(g.id);
+        startNext(g);
+        return DialResult.ENCODED;
     }
 
     /**
@@ -326,6 +403,7 @@ public final class ConnectionManager {
             close(g.connection, GateListener.CloseReason.GATE_REMOVED);
         }
         gates.remove(gate);
+        rings.remove(gate);
     }
 
     /**
@@ -335,6 +413,7 @@ public final class ConnectionManager {
      */
     public void clear() {
         gates.clear();
+        rings.clear();
     }
 
     // ---------------------------------------------------------------- time / temps
@@ -374,31 +453,59 @@ public final class ConnectionManager {
                 case IDLE -> {
                 }
             }
-            if (g.state == WormholeState.IDLE && g.encoded.isEmpty() && g.pending.isEmpty()) {
+            if (g.state == WormholeState.IDLE && g.encoded.isEmpty() && g.pending.isEmpty() && g.inFlight == null) {
                 gates.remove(g.id);
             }
         }
     }
 
     /**
-     * Encodes the next queued chevron when its delay is up, or drops a stalled manual dial.
+     * Follows the symbol being dialed: signals the start of the lock, locks it when done and starts the next
+     * one; or drops a stalled manual dial.
      *
-     * <p><i>FR —</i> Encode le prochain chevron en attente quand son délai est écoulé, ou abandonne une
-     * numérotation manuelle bloquée.
+     * <p><i>FR —</i> Suit le symbole en cours : signale le début du verrouillage, le verrouille une fois
+     * terminé et lance le suivant ; ou abandonne une numérotation manuelle bloquée.
      */
     private void tickDialing(Gate g) {
-        if (!g.pending.isEmpty()) {
-            if (tick - g.lastChevronTick >= timings.chevronDelayTicks()) {
-                StargateSymbol next = g.pending.poll();
-                if (!AddressValidator.canEncode(g.encoded, next)) {
-                    failDial(g, DialResult.INVALID_SYMBOL);
-                    return;
-                }
-                lockChevron(g, next);
+        if (g.inFlight != null) {
+            RingMotion ring = getRing(g.id);
+            if (tick == ring.spinEnd() && ring.spinTicks() > 0) {
+                listener.onDialProgress(g.id);
             }
-        } else if (tick - g.lastChevronTick >= timings.dialTimeoutTicks()) {
+            if (tick >= ring.lockEnd()) {
+                StargateSymbol symbol = g.inFlight;
+                g.inFlight = null;
+                lockChevron(g, symbol);
+                if (g.state == WormholeState.DIALING) {
+                    startNext(g);
+                }
+            }
+        } else if (g.pending.isEmpty() && tick - g.lastChevronTick >= timings.dialTimeoutTicks()) {
             failDial(g, DialResult.TIMED_OUT);
         }
+    }
+
+    /**
+     * Starts spinning the ring towards the next queued symbol, if the ring is free. The direction alternates
+     * with each chevron.
+     *
+     * <p><i>FR —</i> Fait tourner l'anneau vers le prochain symbole en file, si l'anneau est libre. Le sens
+     * alterne à chaque chevron.
+     */
+    private void startNext(Gate g) {
+        if (g.inFlight != null || g.pending.isEmpty()) {
+            return;
+        }
+        StargateSymbol next = g.pending.poll();
+        if (!AddressValidator.canEncode(g.encoded, next)) {
+            failDial(g, DialResult.INVALID_SYMBOL);
+            return;
+        }
+        g.inFlight = next;
+        boolean forwards = g.encoded.size() % 2 == 0;
+        double from = getRing(g.id).position(tick);
+        rings.put(g.id, RingMotion.towards(from, next, forwards, tick, timings.ticksPerSymbol(), timings.chevronDelayTicks()));
+        listener.onDialProgress(g.id);
     }
 
     // ---------------------------------------------------------------- transitions
@@ -481,6 +588,11 @@ public final class ConnectionManager {
 
     /** Resets a dialing gate to idle and reports why. / <i>FR —</i> Remet une porte qui compose à l'arrêt et signale pourquoi. */
     private DialResult failDial(Gate g, DialResult reason) {
+        if (g.inFlight != null) {
+            // The ring stops where it is. / L'anneau s'arrête là où il est.
+            rings.put(g.id, RingMotion.rest(getRing(g.id).position(tick)));
+            g.inFlight = null;
+        }
         g.encoded.clear();
         g.pending.clear();
         setState(g, WormholeState.IDLE);
@@ -492,6 +604,9 @@ public final class ConnectionManager {
     private void setState(Gate g, WormholeState state) {
         WormholeState from = g.state;
         g.state = state;
+        if (state != WormholeState.DIALING) {
+            g.automatic = false;
+        }
         g.stateSince = tick;
         g.lastChevronTick = tick;
         if (from != state) {
@@ -513,6 +628,10 @@ public final class ConnectionManager {
         WormholeState state = WormholeState.IDLE;
         final List<StargateSymbol> encoded = new ArrayList<>();
         final Deque<StargateSymbol> pending = new ArrayDeque<>();
+        /** Symbol the ring is bringing up and the chevron locking, or null. / <i>FR —</i> Symbole amené par l'anneau puis verrouillé, ou null. */
+        StargateSymbol inFlight;
+        /** Dialing from {@link #dial}: no manual symbols. / <i>FR —</i> Numérotation de {@link #dial} : pas de symbole manuel. */
+        boolean automatic;
         StargateConnection connection;
         /**
          * Manager tick of the last state change / last locked chevron; timers are derived from these.
@@ -527,6 +646,15 @@ public final class ConnectionManager {
 
         long ticksInState() {
             return tick - stateSince;
+        }
+
+        List<StargateSymbol> dialed() {
+            List<StargateSymbol> all = new ArrayList<>(encoded);
+            if (inFlight != null) {
+                all.add(inFlight);
+            }
+            all.addAll(pending);
+            return all;
         }
     }
 }

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "L": "stargate:naquadah_ingot",
+    "C": "stargate:blue_crystal_shard"
+  },
+  "pattern": [
+    "LLL",
+    "LCL",
+    "LLL"
+  ],
+  "result": {
+    "id": "stargate:stargate_control"
+  }
+}

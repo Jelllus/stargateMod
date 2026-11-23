@@ -2,6 +2,10 @@
   "values": [
     "stargate:stargate_control",
     "stargate:stargate_chevron",
-    "stargate:naquadah_block"
+    "stargate:naquadah_block",
+    "stargate:stargate_dhd",
+    "stargate:naquadah_ore",
+    "stargate:raw_naquadah_block",
+    "stargate:blue_crystal_cluster"
   ]
 }

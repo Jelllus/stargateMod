@@ -1,6 +1,11 @@
 """GLB (Sketchfab 'Stargate') -> NeoForge OBJ models for the formed gate.
-Outputs ring.obj, chevron_1..7.obj (the event horizon is drawn by EventHorizonRenderer) in block units, centred on the 5x5 frame
-(control block at origin block, ring centre at x=0.5, y=2.5, z=0.5)."""
+Outputs ring.obj, chevron_1..7.obj (the event horizon is drawn by StargateRenderer) in block units, centred on the 5x5 frame
+(control block at origin block, ring centre at x=0.5, y=2.5, z=0.5).
+The inner symbol track is cut out of ring.obj: StargateRenderer draws it, turning, with the mod's own glyphs.
+The script prints the track's radii and face depth for StargateRenderer.
+
+FR: la piste des symboles est retirée de ring.obj : StargateRenderer la dessine, en rotation, avec les glyphes du
+mod. Le script affiche les rayons et la profondeur de la piste pour StargateRenderer."""
 import json, struct, sys, os, math
 import numpy as np
 src, outdir = sys.argv[1], sys.argv[2]
@@ -41,12 +46,25 @@ for r in j['scenes'][0]['nodes']: walk(r,np.eye(4),None)
 
 allp=np.vstack([p[2] for p in parts]); radius=np.max(np.linalg.norm(allp[:,:2],axis=1))
 S=2.5/radius; OFF=np.array([0.5,2.5,0.5])
+# Symbol track, in the ring mesh's own units (outer edge 0.998): recessed faces at |z| <= 0.046, r 0.840..0.899.
+# Piste des symboles, dans les unités du maillage de l'anneau : faces en retrait |z| <= 0.046, r 0.840..0.899.
+TRACK_R0, TRACK_R1, TRACK_Z = 0.8395, 0.9005, 0.0465
+def cut_track(wp, tris):
+    unit = np.max(np.linalg.norm(wp[:,:2],axis=1)) / 0.998
+    r = np.linalg.norm(wp[:,:2],axis=1) / unit; z = np.abs(wp[:,2]) / unit
+    on = (r >= TRACK_R0) & (r <= TRACK_R1) & (z <= TRACK_Z)
+    keep = ~on[tris].all(axis=1)
+    print('track: cut', int((~keep).sum()), 'triangles; block units r', round(0.840*unit*S,4), '..', round(0.899*unit*S,4),
+          'face |z|', round(0.045*unit*S,4))
+    return tris[keep]
 # model chevron slot (40 deg steps clockwise from top) -> our chevron number; slots 4,5 (bottom) unused
 SLOT={0:7,1:1,2:2,3:3,6:4,7:5,8:6}
 files={}
 for mname,group,wp,wn,uv,tris in parts:
-    if mname=='gate' or mname=='gate_grey': key='ring'
-    elif mname=='event_horizon': continue  # drawn animated by EventHorizonRenderer / dessiné animé par EventHorizonRenderer
+    if mname=='gate' or mname=='gate_grey':
+        key='ring'
+        if mname=='gate': tris=cut_track(wp,tris)
+    elif mname=='event_horizon': continue  # drawn animated by StargateRenderer / dessiné animé par StargateRenderer
     else:
         c=wp.mean(0); slot=round((math.degrees(math.atan2(c[0],c[1]))%360)/40)%9
         num=SLOT.get(slot); key=f'chevron_{num}' if num else 'ring'

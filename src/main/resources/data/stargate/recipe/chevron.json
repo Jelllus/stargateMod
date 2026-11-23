@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": "stargate:naquadah_ingot"
+  },
+  "pattern": [
+    "L L",
+    " L "
+  ],
+  "result": {
+    "id": "stargate:chevron"
+  }
+}

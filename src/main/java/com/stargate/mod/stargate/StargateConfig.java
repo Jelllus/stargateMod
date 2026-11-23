@@ -18,12 +18,12 @@ public final class StargateConfig {
     }
 
     /**
-     * Ticks between two chevrons during an automatic dial.
+     * Ticks the top chevron takes to lock a symbol once the ring has brought it up.
      *
-     * <p><i>FR —</i> Ticks entre deux chevrons pendant une numérotation automatique.
+     * <p><i>FR —</i> Ticks que met le chevron du haut à verrouiller un symbole une fois amené par l'anneau.
      */
     public static final ModConfigSpec.IntValue CHEVRON_DELAY = BUILDER
-            .comment("Ticks between two chevrons when a gate dials automatically")
+            .comment("Ticks the top chevron takes to lock a symbol once the ring has brought it up")
             .defineInRange("chevronDelayTicks", Timings.DEFAULT.chevronDelayTicks(), 0, 20 * 60);
 
     /**
@@ -61,6 +61,15 @@ public final class StargateConfig {
     public static final ModConfigSpec.IntValue DIAL_TIMEOUT_TICKS = BUILDER
             .comment("A manual dial is cancelled after this many ticks without a new symbol")
             .defineInRange("dialTimeoutTicks", Timings.DEFAULT.dialTimeoutTicks(), 1, Integer.MAX_VALUE);
+
+    /**
+     * Ring spin speed: ticks to move by one symbol.
+     *
+     * <p><i>FR —</i> Vitesse de rotation de l'anneau : ticks pour avancer d'un symbole.
+     */
+    public static final ModConfigSpec.IntValue RING_TICKS_PER_SYMBOL = BUILDER
+            .comment("Ring spin speed: ticks to move by one symbol (39 symbols per turn, 0 = instant)")
+            .defineInRange("ringTicksPerSymbol", Timings.DEFAULT.ticksPerSymbol(), 0, 20);
 
     static {
         BUILDER.pop();
@@ -109,6 +118,6 @@ public final class StargateConfig {
      */
     public static Timings timings() {
         return new Timings(CHEVRON_DELAY.getAsInt(), ENGAGE_TICKS.getAsInt(), MAX_OPEN_TICKS.getAsInt(),
-                CLOSE_TICKS.getAsInt(), DIAL_TIMEOUT_TICKS.getAsInt());
+                CLOSE_TICKS.getAsInt(), DIAL_TIMEOUT_TICKS.getAsInt(), RING_TICKS_PER_SYMBOL.getAsInt());
     }
 }

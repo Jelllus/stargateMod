@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:ore",
+  "targets": [
+    {
+      "target": {
+        "predicate_type": "minecraft:any_of",
+        "rules": [
+          {
+            "predicate_type": "minecraft:tag_match",
+            "tag": "minecraft:stone_ore_replaceables"
+          },
+          {
+            "predicate_type": "minecraft:tag_match",
+            "tag": "minecraft:deepslate_ore_replaceables"
+          }
+        ]
+      },
+      "state": "stargate:naquadah_ore"
+    }
+  ],
+  "size": 8,
+  "discard_chance_on_air_exposure": 0.5
+}

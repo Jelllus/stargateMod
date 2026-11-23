@@ -48,6 +48,18 @@ public interface GateListener {
     }
 
     /**
+     * The ring started spinning towards a symbol, or the top chevron started locking it (see
+     * {@link ConnectionManager#getRing}), or a symbol was queued.
+     *
+     * <p><i>FR —</i> L'anneau a commencé à tourner vers un symbole, ou le chevron du haut a commencé à le
+     * verrouiller (voir {@link ConnectionManager#getRing}), ou un symbole a été mis en file.
+     *
+     * @param gate the dialing gate / la porte qui compose
+     */
+    default void onDialProgress(UUID gate) {
+    }
+
+    /**
      * A dial failed; the gate is back to {@link WormholeState#IDLE}.
      *
      * <p><i>FR —</i> Une numérotation a échoué ; la porte est revenue à {@link WormholeState#IDLE}.

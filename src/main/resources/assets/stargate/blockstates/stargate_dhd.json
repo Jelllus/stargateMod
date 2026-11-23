@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "stargate:block/dhd/dhd"
+    },
+    "facing=west": {
+      "model": "stargate:block/dhd/dhd",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "stargate:block/dhd/dhd",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "stargate:block/dhd/dhd",
+      "y": 270
+    }
+  }
+}

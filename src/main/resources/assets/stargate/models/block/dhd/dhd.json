@@ -1,0 +1,10 @@
+{
+  "parent": "minecraft:block/block",
+  "loader": "neoforge:obj",
+  "model": "stargate:models/block/dhd/dhd.obj",
+  "automatic_culling": false,
+  "textures": {
+    "white": "stargate:block/gate_white",
+    "particle": "minecraft:block/polished_andesite"
+  }
+}

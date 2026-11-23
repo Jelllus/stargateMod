@@ -1,6 +1,7 @@
 package com.stargate.mod.registry;
 
 import com.stargate.mod.StargateMod;
+import com.stargate.mod.stargate.block.DhdBlockEntity;
 import com.stargate.mod.stargate.block.StargateBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -26,6 +27,13 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StargateBlockEntity>> STARGATE =
             BLOCK_ENTITY_TYPES.register("stargate",
                     () -> new BlockEntityType<>(StargateBlockEntity::new, ModBlocks.STARGATE_CONTROL.get()));
+
+    /**
+     * Block entity of {@link ModBlocks#STARGATE_DHD}. / <i>FR —</i> Block entity de {@link ModBlocks#STARGATE_DHD}.
+     */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DhdBlockEntity>> DHD =
+            BLOCK_ENTITY_TYPES.register("dhd",
+                    () -> new BlockEntityType<>(DhdBlockEntity::new, ModBlocks.STARGATE_DHD.get()));
 
     private ModBlockEntities() {
     }
