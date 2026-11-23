@@ -4,12 +4,14 @@ import com.stargate.mod.registry.ModBlockEntities;
 import com.stargate.mod.stargate.address.StargateAddress;
 import com.stargate.mod.stargate.address.StargateSymbol;
 import com.stargate.mod.stargate.connection.ConnectionManager;
+import com.stargate.mod.stargate.connection.RingMotion;
 import com.stargate.mod.stargate.connection.StargateConnection;
 import com.stargate.mod.stargate.connection.Timings;
 import com.stargate.mod.stargate.connection.WormholeState;
 import com.stargate.mod.stargate.network.StargateNetwork;
 import com.stargate.mod.stargate.network.StargateRegistry;
 import com.stargate.mod.stargate.network.StargateRegistry.GateRecord;
+import com.stargate.mod.stargate.text.SymbolText;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
@@ -105,6 +107,9 @@ public class StargateBlockEntity extends BlockEntity {
 
     private WormholeState state = WormholeState.IDLE;
     private List<StargateSymbol> chevrons = List.of();
+    private List<StargateSymbol> dialed = List.of();
+    /** Ring movement, in game time. / <i>FR —</i> Mouvement de l'anneau, en temps de jeu. */
+    private RingMotion ring = RingMotion.rest(0);
     private boolean incoming;
     private @Nullable StargateAddress remoteAddress;
 
@@ -214,6 +219,31 @@ public class StargateBlockEntity extends BlockEntity {
     }
 
     /**
+     * Every symbol dialed, locked or still to be brought up by the ring (what a DHD shows as pressed).
+     *
+     * <p><i>FR —</i> Tous les symboles composés, verrouillés ou encore à amener par l'anneau (ce qu'un DHD
+     * montre comme enfoncé).
+     *
+     * @return an unmodifiable list / une liste non modifiable
+     */
+    public List<StargateSymbol> getDialed() {
+        return dialed;
+    }
+
+    /**
+     * Client: symbol under the top chevron right now, fractional while the ring turns.
+     *
+     * <p><i>FR —</i> Client : symbole sous le chevron du haut en ce moment, fractionnaire pendant la
+     * rotation de l'anneau.
+     *
+     * @param partialTick fraction of the current tick / fraction du tick en cours
+     * @return position in [0, 39) / position dans [0, 39)
+     */
+    public double getRingPosition(float partialTick) {
+        return level == null ? ring.to() : ring.position(level.getGameTime() + partialTick);
+    }
+
+    /**
      * Whether this gate is the dialed (incoming) end of its wormhole.
      *
      * <p><i>FR —</i> Indique si cette porte est l'extrémité appelée (entrante) de son trou de ver.
@@ -291,12 +321,12 @@ public class StargateBlockEntity extends BlockEntity {
             return Component.translatable("stargate.gate.incomplete", framePieces, StargateFrame.PIECES);
         }
         MutableComponent text = Component.translatable("stargate.gate.status",
-                address.toString(),
+                SymbolText.address(address),
                 Component.translatable("stargate.state." + state.name().toLowerCase(Locale.ROOT)),
                 chevrons.size());
         if (remoteAddress != null) {
             text.append(Component.translatable(incoming ? "stargate.gate.incoming" : "stargate.gate.outgoing",
-                    remoteAddress.toString()));
+                    SymbolText.glyphs(remoteAddress)));
         }
         return text;
     }
@@ -437,6 +467,9 @@ public class StargateBlockEntity extends BlockEntity {
         }
         WormholeState newState = WormholeState.IDLE;
         List<StargateSymbol> newChevrons = List.of();
+        List<StargateSymbol> newDialed = List.of();
+        RingMotion newRing = RingMotion.rest(ring.position(serverLevel.getGameTime()));
+        boolean locking = false;
         boolean newIncoming = false;
         StargateAddress newRemote = null;
 
@@ -445,6 +478,10 @@ public class StargateBlockEntity extends BlockEntity {
             ConnectionManager cm = manager.get();
             newState = cm.getState(gateId);
             newChevrons = cm.getEncoded(gateId);
+            newDialed = cm.getDialed(gateId);
+            cm.restoreRing(gateId, newRing.to());
+            newRing = cm.getRing(gateId).shifted(serverLevel.getGameTime() - cm.currentTick());
+            locking = cm.isLocking(gateId);
             Optional<StargateConnection> connection = cm.getConnection(gateId);
             if (connection.isPresent()) {
                 StargateConnection c = connection.get();
@@ -456,12 +493,15 @@ public class StargateBlockEntity extends BlockEntity {
         }
 
         boolean changed = newState != state || !newChevrons.equals(chevrons) || newIncoming != incoming
-                || !Objects.equals(newRemote, remoteAddress);
+                || !Objects.equals(newRemote, remoteAddress) || !newDialed.equals(dialed) || !newRing.equals(ring)
+                || getBlockState().getValueOrElse(StargateControlBlock.LOCKING, false) != locking;
         if (!changed && !force) {
             return;
         }
         state = newState;
         chevrons = newChevrons;
+        dialed = newDialed;
+        ring = newRing;
         incoming = newIncoming;
         remoteAddress = newRemote;
         setChanged();
@@ -477,7 +517,8 @@ public class StargateBlockEntity extends BlockEntity {
                     .setValue(StargateControlBlock.ACTIVE, state.isConnected())
                     .setValue(StargateControlBlock.FORMED, formed)
                     .setValue(StargateControlBlock.AXIS, formed ? axis : blockState.getValue(StargateControlBlock.AXIS))
-                    .setValue(StargateControlBlock.CHEVRONS, lit);
+                    .setValue(StargateControlBlock.CHEVRONS, lit)
+                    .setValue(StargateControlBlock.LOCKING, formed && locking);
             if (wanted != blockState) {
                 blockState = wanted;
                 serverLevel.setBlock(worldPosition, blockState, Block.UPDATE_ALL);
@@ -528,6 +569,12 @@ public class StargateBlockEntity extends BlockEntity {
         output.putString("state", state.name());
         output.putIntArray("chevrons", chevrons.stream().mapToInt(StargateSymbol::id).toArray());
         output.putBoolean("incoming", incoming);
+        output.putIntArray("dialed", dialed.stream().mapToInt(StargateSymbol::id).toArray());
+        output.putDouble("ring_from", ring.from());
+        output.putDouble("ring_to", ring.to());
+        output.putLong("ring_start", ring.startTick());
+        output.putInt("ring_spin", ring.spinTicks());
+        output.putInt("ring_lock", ring.lockTicks());
         Timings timings = StargateNetwork.running().map(ConnectionManager::timings).orElse(Timings.DEFAULT);
         output.putInt("engage_ticks", timings.engageTicks());
         output.putInt("close_ticks", timings.closeTicks());
@@ -552,6 +599,12 @@ public class StargateBlockEntity extends BlockEntity {
         chevrons = input.getIntArray("chevrons")
                 .map(ids -> Arrays.stream(ids).filter(StargateSymbol::isValidId).mapToObj(StargateSymbol::of).toList())
                 .orElse(List.of());
+        dialed = input.getIntArray("dialed")
+                .map(ids -> Arrays.stream(ids).filter(StargateSymbol::isValidId).mapToObj(StargateSymbol::of).toList())
+                .orElse(List.of());
+        ring = new RingMotion(input.getDoubleOr("ring_from", 0), input.getDoubleOr("ring_to", 0),
+                input.getLongOr("ring_start", 0), Math.max(0, input.getIntOr("ring_spin", 0)),
+                Math.max(0, input.getIntOr("ring_lock", 0)));
         incoming = input.getBooleanOr("incoming", false);
         remoteAddress = input.read("remote", StargateRegistry.ADDRESS_CODEC).orElse(null);
         engageTicks = Math.max(1, input.getIntOr("engage_ticks", Timings.DEFAULT.engageTicks()));

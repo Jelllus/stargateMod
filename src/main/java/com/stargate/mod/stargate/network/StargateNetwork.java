@@ -16,7 +16,11 @@ import com.stargate.mod.stargate.block.StargateBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
@@ -25,6 +29,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -226,6 +231,23 @@ public final class StargateNetwork {
      *
      * <p><i>FR —</i> Marque les portes touchées pour le prochain envoi, et journalise en niveau debug.
      */
+    /** Players this close to a gate see its dial failures. / <i>FR —</i> Les joueurs à cette distance voient les échecs de numérotation. */
+    private static final int NOTIFY_RANGE = 24;
+
+    /** Runs {@code action} at a registered, loaded gate. / <i>FR —</i> Exécute {@code action} sur une porte enregistrée et chargée. */
+    private static void atGate(UUID gate, java.util.function.BiConsumer<ServerLevel, BlockPos> action) {
+        if (server == null) {
+            return;
+        }
+        registry(server).get(gate).ifPresent(record -> {
+            ServerLevel level = server.getLevel(record.location().dimension());
+            BlockPos pos = record.location().pos();
+            if (level != null && level.isLoaded(pos)) {
+                action.accept(level, pos);
+            }
+        });
+    }
+
     private static final class SyncListener implements GateListener {
         @Override
         public void onStateChanged(UUID gate, WormholeState from, WormholeState to) {
@@ -236,12 +258,31 @@ public final class StargateNetwork {
         @Override
         public void onChevronEncoded(UUID gate, int chevron, StargateSymbol symbol, boolean incoming) {
             DIRTY_GATES.add(gate);
+            if (!incoming) {
+                atGate(gate, (level, pos) -> level.playSound(null, pos.above(4), SoundEvents.IRON_TRAPDOOR_CLOSE,
+                        SoundSource.BLOCKS, 1.2f, 0.55f));
+            }
+        }
+
+        @Override
+        public void onDialProgress(UUID gate) {
+            DIRTY_GATES.add(gate);
         }
 
         @Override
         public void onDialFailed(UUID gate, DialResult reason) {
             DIRTY_GATES.add(gate);
             StargateMod.LOGGER.debug("Gate {}: dial failed ({})", gate, reason);
+            // Failures can come long after the last key press (when the last chevron locks): tell players nearby.
+            // Un échec peut arriver bien après la dernière touche (au dernier chevron) : prévenir les joueurs proches.
+            Component message = Component.translatable("stargate.dial." + reason.name().toLowerCase(Locale.ROOT));
+            atGate(gate, (level, pos) -> {
+                for (ServerPlayer player : level.players()) {
+                    if (player.blockPosition().closerThan(pos, NOTIFY_RANGE)) {
+                        player.sendOverlayMessage(message);
+                    }
+                }
+            });
         }
 
         @Override

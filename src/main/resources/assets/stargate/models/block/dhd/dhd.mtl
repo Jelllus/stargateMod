@@ -1,0 +1,21 @@
+# Original DHD body materials (flat colours over a white texture)
+
+newmtl dhd_stone
+Kd 0.50 0.47 0.43
+Ka 0 0 0
+map_Kd #white
+
+newmtl dhd_pillar
+Kd 0.42 0.40 0.37
+Ka 0 0 0
+map_Kd #white
+
+newmtl dhd_console
+Kd 0.36 0.35 0.36
+Ka 0 0 0
+map_Kd #white
+
+newmtl dhd_rim
+Kd 0.62 0.60 0.56
+Ka 0 0 0
+map_Kd #white
