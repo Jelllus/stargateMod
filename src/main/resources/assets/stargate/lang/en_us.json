@@ -33,5 +33,7 @@
   "item.stargate.naquadah_nugget": "Naquadah Nugget",
   "block.stargate.blue_crystal_cluster": "Blue Crystal Cluster",
   "item.stargate.blue_crystal_shard": "Blue Crystal Shard",
-  "item.stargate.chevron": "Chevron"
+  "item.stargate.chevron": "Chevron",
+  "entity.stargate.replicator": "Replicator",
+  "item.stargate.replicator_spawn_egg": "Replicator Spawn Egg"
 }

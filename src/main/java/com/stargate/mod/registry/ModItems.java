@@ -2,6 +2,7 @@ package com.stargate.mod.registry;
 
 import com.stargate.mod.StargateMod;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -89,6 +90,12 @@ public final class ModItems {
      * <i>FR —</i> Chevron, un V de lingots de naquadah ; composant du bloc chevron de la porte.
      */
     public static final DeferredItem<Item> CHEVRON = ITEMS.registerSimpleItem("chevron");
+
+    /**
+     * Spawn egg of the {@link ModEntities#REPLICATOR}. / <i>FR —</i> Œuf d'apparition du {@link ModEntities#REPLICATOR}.
+     */
+    public static final DeferredItem<SpawnEggItem> REPLICATOR_SPAWN_EGG =
+            ITEMS.registerItem("replicator_spawn_egg", SpawnEggItem::new, p -> p.spawnEgg(ModEntities.REPLICATOR.get()));
 
     private ModItems() {
     }

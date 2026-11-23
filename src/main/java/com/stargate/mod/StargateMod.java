@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 
 import com.stargate.mod.registry.ModBlockEntities;
 import com.stargate.mod.registry.ModBlocks;
+import com.stargate.mod.registry.ModEntities;
 import com.stargate.mod.registry.ModCreativeTabs;
 import com.stargate.mod.registry.ModItems;
 import com.stargate.mod.stargate.StargateConfig;
@@ -46,6 +47,7 @@ public class StargateMod {
         ModItems.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModBlockEntities.register(modEventBus);
+        ModEntities.register(modEventBus);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.SYNCED, StargateConfig.SPEC);

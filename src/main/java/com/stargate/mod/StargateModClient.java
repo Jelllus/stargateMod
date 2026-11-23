@@ -2,7 +2,9 @@ package com.stargate.mod;
 
 import com.stargate.mod.client.DhdRenderer;
 import com.stargate.mod.client.StargateRenderer;
+import com.stargate.mod.client.replicator.ReplicatorRenderer;
 import com.stargate.mod.registry.ModBlockEntities;
+import com.stargate.mod.registry.ModEntities;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -40,13 +42,14 @@ public class StargateModClient {
     }
 
     /**
-     * Registers the gate renderer (symbol track, event horizon) and the key renderer (DHD).
+     * Registers the gate renderer (symbol track, event horizon), the key renderer (DHD) and the replicator renderer.
      *
-     * <p><i>FR —</i> Enregistre le rendu de la porte (piste des symboles, horizon des événements) et celui des touches (DHD).
+     * <p><i>FR —</i> Enregistre le rendu de la porte (piste des symboles, horizon des événements) celui des touches (DHD) et celui du réplicateur.
      */
     @SubscribeEvent
     static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.STARGATE.get(), StargateRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.DHD.get(), DhdRenderer::new);
+        event.registerEntityRenderer(ModEntities.REPLICATOR.get(), ReplicatorRenderer::new);
     }
 }

@@ -23,3 +23,11 @@ Additional Resources:
 ==========
 Community Documentation: https://docs.neoforged.net/  
 NeoForged Discord: https://discord.neoforged.net/
+
+Credits:
+==========
+Replicator model (`assets/stargate/models/entity/replicator.obj`, `textures/entity/replicator.png`):
+"Replicator SG1" by TaurWing (https://sketchfab.com/TaurWing),
+https://sketchfab.com/3d-models/replicator-sg1-e8a67b78936d4092b954589c67214396 —
+licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/). Converted from glTF to OBJ
+(split into body and articulated legs, triangles merged into quads).
