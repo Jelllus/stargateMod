@@ -35,5 +35,6 @@
   "item.stargate.blue_crystal_shard": "Éclat de cristal bleu",
   "item.stargate.chevron": "Chevron",
   "entity.stargate.replicator": "Réplicateur",
-  "item.stargate.replicator_spawn_egg": "Œuf d'apparition de réplicateur"
+  "item.stargate.replicator_spawn_egg": "Œuf d'apparition de réplicateur",
+  "item.stargate.staff_weapon": "Lance Goa'uld"
 }

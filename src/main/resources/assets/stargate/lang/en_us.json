@@ -35,5 +35,6 @@
   "item.stargate.blue_crystal_shard": "Blue Crystal Shard",
   "item.stargate.chevron": "Chevron",
   "entity.stargate.replicator": "Replicator",
-  "item.stargate.replicator_spawn_egg": "Replicator Spawn Egg"
+  "item.stargate.replicator_spawn_egg": "Replicator Spawn Egg",
+  "item.stargate.staff_weapon": "Goa'uld Staff Weapon"
 }

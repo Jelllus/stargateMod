@@ -1,0 +1,6 @@
+# Goa'uld staff weapon, from "Inspired by Stargate SG-1: Goa'Uld Staff Weapon" by Ska-Ara (CC-BY-NC-SA-4.0)
+
+newmtl staff
+Kd 1 1 1
+Ka 0 0 0
+map_Kd #staff
